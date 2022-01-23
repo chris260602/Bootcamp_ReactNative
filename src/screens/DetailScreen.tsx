@@ -7,41 +7,135 @@ import {
   Button,
   Touchable,
   TouchableOpacity,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
-import React from 'react';
-import {IProducts} from '../interface/Interface';
+import React, {useEffect, useState} from 'react';
+import {IFavourites, IProducts} from '../interface/Interface';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {navigationStackList} from '../navigation/navigationStackList';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../store/store';
+import {
+  AddFavourites,
+  RemoveFavourites,
+} from '../store/FavouriteReducer/FavouriteReducer';
+import axios from 'axios';
+import {
+  addProducts,
+  removeProducts,
+} from '../store/ProductReducer/ProductReducer';
 
-const DetailScreen = (props: IProducts) => {
+const DetailScreen = () => {
+  const [isAdded, SetIsAdded] = useState(false);
+  const [isLoading, SetIsLoading] = useState(true);
+  const [isBtnClick, SetIsBtnClick] = useState(false);
+  const [product, SetProduct] = useState<IProducts>({
+    id: 0,
+    description: '',
+    image: '',
+    price: 0,
+    title: '',
+  });
+  const dispatch = useDispatch();
+  const favourite = useSelector((state: RootState) => state.favourite);
   const route = useRoute<RouteProp<navigationStackList, 'DetailScreen'>>();
-  const {product} = route.params;
+  const {id} = route.params;
+  const url = 'https://fakestoreapi.com/products/';
+  const getSingleData = async () => {
+    const response = await axios.get(url + id.id);
+    const data: IProducts = response.data;
+    return data;
+  };
+  const ToggleFavorite = async () => {
+    if (isAdded) {
+      dispatch(RemoveFavourites(id));
+      dispatch(removeProducts(id));
+      SetIsAdded(false);
+    } else {
+      const detailID = id;
+      const data: IProducts = await getSingleData();
+      dispatch(AddFavourites([detailID]));
+      dispatch(addProducts(data));
+      SetIsAdded(true);
+    }
+  };
+  const checkIsAdded = () => {
+    favourite.ids.forEach(item => {
+      if (item.id === id.id) {
+        SetIsAdded(true);
+        return;
+      }
+    });
+  };
+  const getDetail = async () => {
+    SetIsLoading(true);
+    try {
+      const data: IProducts = await getSingleData();
+      SetProduct({
+        id: data.id,
+        title: data.title,
+        price: data.price,
+        description: data.description,
+        image: data.image,
+      });
+      checkIsAdded();
+      SetIsLoading(false);
+    } catch (e) {
+      console.log('ERROR', e);
+    }
+    checkIsAdded();
+  };
+  const ToggleFavouriteHandler = async () => {
+    SetIsBtnClick(true);
+    await ToggleFavorite();
+    SetIsBtnClick(false);
+  };
+  useEffect(() => {
+    const getDetailHandler = async () => {
+      await getDetail();
+    };
+    getDetailHandler();
+  }, []);
+
   return (
     <View style={styles.container}>
-      <ScrollView>
-        <View style={styles.imageContainer}>
-          <Image source={{uri: product.image}} style={styles.imageItem} />
-        </View>
-        <View style={styles.ItemContainer}>
-          <View style={styles.childContainer}>
-            <Text style={styles.productID}>ID: {product.id}</Text>
+      {isLoading ? (
+        <ActivityIndicator size={'large'} style={styles.loadingContainer} />
+      ) : (
+        <ScrollView>
+          <View style={styles.imageContainer}>
+            <Image source={{uri: product.image}} style={styles.imageItem} />
           </View>
-          <View style={styles.childContainer}>
-            <Text style={styles.MainTitle}>Title</Text>
-            <Text style={styles.title}>{product.title}</Text>
+          <View style={styles.ItemContainer}>
+            <View style={styles.childContainer}>
+              <Text style={styles.productID}>ID: {product.id}</Text>
+            </View>
+            <View style={styles.childContainer}>
+              <Text style={styles.MainTitle}>Title</Text>
+              <Text style={styles.title}>{product.title}</Text>
+            </View>
+            <View style={styles.childContainer}>
+              <Text style={styles.price}>${product.price}</Text>
+            </View>
+            <View style={styles.childContainer}>
+              <Text style={styles.MainTitle}>Description</Text>
+              <Text style={styles.description}>{product.description}</Text>
+            </View>
           </View>
-          <View style={styles.childContainer}>
-            <Text style={styles.price}>${product.price}</Text>
-          </View>
-          <View style={styles.childContainer}>
-            <Text style={styles.MainTitle}>Description</Text>
-            <Text style={styles.description}>{product.description}</Text>
-          </View>
-        </View>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>[Add to/Remove from] Favourite</Text>
-        </TouchableOpacity>
-      </ScrollView>
+          {isBtnClick ? (
+            <ActivityIndicator style={styles.loadingBtn} size={'large'} />
+          ) : (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => ToggleFavouriteHandler()}>
+              <Text style={styles.buttonText}>
+                {isAdded ? 'Remove from Favourites' : 'Add to Favourites'}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </ScrollView>
+      )}
     </View>
   );
 };
@@ -105,5 +199,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: 'white',
+  },
+  loadingContainer: {
+    display: 'flex',
+    flex: 1,
+  },
+  loadingBtn: {
+    marginBottom: 30,
   },
 });

@@ -5,3 +5,7 @@ export interface IProducts {
     price: number;
     image:string;
   }
+
+export interface IFavourites{
+    id: number
+}

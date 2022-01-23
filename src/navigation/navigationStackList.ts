@@ -1,7 +1,9 @@
-import {IProducts} from "../interface/Interface"
+import {IFavourites} from "../interface/Interface"
 export type navigationStackList = {
+    navigation: undefined;
     HomeScreen: undefined;
     DetailScreen: {
-      product: IProducts
+      id: IFavourites
     };
+    FavouriteScreen:undefined;
   };

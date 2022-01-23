@@ -7,22 +7,34 @@ import {
   StyleSheet,
   ListRenderItemInfo,
   ActivityIndicator,
+  Button,
+  Alert,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import ItemList from '../components/ItemList';
 import {IProducts} from '../interface/Interface';
 import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {
+  NativeStackHeaderProps,
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
 import {navigationStackList} from '../navigation/navigationStackList';
+import axios from 'axios';
+import {useDispatch, useSelector} from 'react-redux';
+import {saveProducts} from '../store/ProductReducer/ProductReducer';
+import {RootState} from '../store/store';
 const HomeScreen = () => {
   const [Products, SetProducts] = useState<IProducts[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const getDataHandler = async () => {
-    const response = await fetch('https://fakestoreapi.com/products', {
-      method: 'GET',
-    });
-    const data = response.json();
+    const url = 'https://fakestoreapi.com/products';
+    const response = await axios.get(url);
+    const data = response.data;
     return data;
+  };
+
+  const navigateToFavourites = () => {
+    navigation.navigate('FavouriteScreen');
   };
 
   useEffect(() => {
@@ -35,6 +47,15 @@ const HomeScreen = () => {
     getData();
   }, []);
 
+  const navigation =
+    useNavigation<
+      NativeStackNavigationProp<navigationStackList, 'HomeScreen'>
+    >();
+  navigation.setOptions({
+    headerRight: () => (
+      <Button title="Favourites" onPress={navigateToFavourites}></Button>
+    ),
+  });
   const renderProducts = (
     renderProductsInfo: ListRenderItemInfo<IProducts>,
   ) => {
@@ -69,7 +90,6 @@ const styles = StyleSheet.create({
   container: {
     display: 'flex',
     flexGrow: 1,
-    // backgroundColor: 'red',
   },
   loadingContainer: {
     display: 'flex',
