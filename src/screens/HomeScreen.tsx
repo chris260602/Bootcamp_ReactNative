@@ -1,28 +1,20 @@
 import {
   View,
-  Text,
   FlatList,
-  Touchable,
   TouchableOpacity,
   StyleSheet,
   ListRenderItemInfo,
   ActivityIndicator,
-  Button,
-  Alert,
+  Image,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import ItemList from '../components/ItemList';
 import {IProducts} from '../interface/Interface';
 import {useNavigation} from '@react-navigation/native';
-import {
-  NativeStackHeaderProps,
-  NativeStackNavigationProp,
-} from '@react-navigation/native-stack';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {navigationStackList} from '../navigation/navigationStackList';
 import axios from 'axios';
-import {useDispatch, useSelector} from 'react-redux';
-import {saveProducts} from '../store/ProductReducer/ProductReducer';
-import {RootState} from '../store/store';
+const heart = require('../icons/heart.png');
 const HomeScreen = () => {
   const [Products, SetProducts] = useState<IProducts[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -51,11 +43,18 @@ const HomeScreen = () => {
     useNavigation<
       NativeStackNavigationProp<navigationStackList, 'HomeScreen'>
     >();
-  navigation.setOptions({
-    headerRight: () => (
-      <Button title="Favourites" onPress={navigateToFavourites}></Button>
-    ),
-  });
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={navigateToFavourites}
+          style={styles.heartContainer}>
+          <Image source={heart} style={styles.heartIcon} />
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
+
   const renderProducts = (
     renderProductsInfo: ListRenderItemInfo<IProducts>,
   ) => {
@@ -96,5 +95,12 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  heartIcon: {
+    width: 22,
+    height: 22,
+  },
+  heartContainer: {
+    padding: 10,
   },
 });

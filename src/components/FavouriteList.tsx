@@ -59,11 +59,13 @@ const styles = StyleSheet.create({
   container: {
     display: 'flex',
     flexDirection: 'row',
-    backgroundColor: 'grey',
+    backgroundColor: 'white',
     margin: 10,
     padding: 10,
     flex: 1,
     borderRadius: 20,
+    borderColor: 'grey',
+    borderWidth: 1,
   },
   imageContainer: {
     display: 'flex',

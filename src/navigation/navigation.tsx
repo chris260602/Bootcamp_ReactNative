@@ -1,13 +1,9 @@
 import React from 'react';
-import {NavigationContainer, useNavigation} from '@react-navigation/native';
-import {
-  createNativeStackNavigator,
-  NativeStackNavigationProp,
-} from '@react-navigation/native-stack';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeScreen from '../screens/HomeScreen';
 import {navigationStackList} from './navigationStackList';
 import DetailScreen from '../screens/DetailScreen';
-import {Alert, Button} from 'react-native';
 import FavouriteScreen from '../screens/FavouriteScreen';
 
 const Stack = createNativeStackNavigator<navigationStackList>();

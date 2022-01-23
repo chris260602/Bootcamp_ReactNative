@@ -4,15 +4,12 @@ import {
   Image,
   StyleSheet,
   ScrollView,
-  Button,
-  Touchable,
   TouchableOpacity,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {IFavourites, IProducts} from '../interface/Interface';
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import {IProducts} from '../interface/Interface';
+import {RouteProp, useRoute} from '@react-navigation/native';
 import {navigationStackList} from '../navigation/navigationStackList';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../store/store';

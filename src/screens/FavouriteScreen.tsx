@@ -2,11 +2,10 @@ import {
   View,
   Text,
   ListRenderItemInfo,
-  ActivityIndicator,
   StyleSheet,
   FlatList,
 } from 'react-native';
-import React, {useState} from 'react';
+import React from 'react';
 import {IProducts} from '../interface/Interface';
 import FavouriteList from '../components/FavouriteList';
 import {useSelector} from 'react-redux';

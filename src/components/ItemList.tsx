@@ -1,12 +1,4 @@
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  Alert,
-  Image,
-} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import React from 'react';
 import {IFavourites, IProducts} from '../interface/Interface';
 import {useNavigation} from '@react-navigation/native';
@@ -53,11 +45,13 @@ const styles = StyleSheet.create({
   container: {
     display: 'flex',
     flexDirection: 'row',
-    backgroundColor: 'grey',
+    backgroundColor: 'white',
     margin: 10,
     padding: 10,
     flex: 1,
     borderRadius: 20,
+    borderColor: 'grey',
+    borderWidth: 1,
   },
   imageContainer: {
     display: 'flex',
